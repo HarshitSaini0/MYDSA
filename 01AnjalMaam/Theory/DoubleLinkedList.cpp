@@ -22,20 +22,25 @@ public:
     void add_at_beg(int);
     void add_at_pos(int, int);
     void del_from_end();
+    void del_from_beg();
+    void del_from_pos(int);
 };
 
 int main()
 {
+    // system("cls");
     DoubleLinkedList D1;
-    int n;
-    cout << "Enter the number of elements you want to enter : ";
-    cin >> n;
-    for (int i = 0; i < n; i++)
+    // int n;
+    // cout << "Enter the number of elements you want to enter : ";
+    // cin >> n;
+    for (int i = 1; i <= 6; i++)
     {
-        int temp,pos;
-        cin >> pos>>temp;
-        D1.add_at_pos(pos,temp);
+        // int temp;
+        // cin >> temp;
+        D1.add_at_beg(i * 10);
     }
+    D1.print();
+    D1.del_from_pos(6);
     D1.print();
     return 0;
 }
@@ -98,7 +103,6 @@ void DoubleLinkedList::print()
     }
     cout << "\n";
 }
-
 void DoubleLinkedList::add_at_end(int value)
 {
     if (this->start == nullptr)
@@ -136,6 +140,7 @@ void DoubleLinkedList::add_at_beg(int value)
         Node *temp;
         temp = new Node;
         temp->data = value;
+        this->start->prev = temp;
         temp->next = this->start;
         temp->prev = nullptr;
         this->start = temp;
@@ -149,30 +154,103 @@ void DoubleLinkedList::add_at_pos(int position, int value)
         this->add_at_beg(value);
         return;
     }
-    else if (position-1 == this->length)
+    else if (position - 1 == this->length)
     {
         this->add_at_end(value);
         return;
     }
-    else if (position-1 > this->length)
+    else if (position - 1 > this->length)
     {
-        cerr <<this->length<< "Invalid position";
+        cerr << this->length << "Invalid position";
         return;
     }
     else
     {
-        Node *temp,*ptr;
+        Node *temp, *ptr;
         temp = new Node;
         temp->data = value;
         ptr = start;
-        for(int i = 1 ;i<position-1;i++){
-            ptr=ptr->next;
+        for (int i = 1; i < position - 1; i++)
+        {
+            ptr = ptr->next;
         }
-        temp->next= ptr->next;
+        temp->next = ptr->next;
         temp->prev = ptr;
         ptr->next->prev = temp;
         ptr->next = temp;
         this->len_inc();
-        
+    }
+}
+
+void DoubleLinkedList::del_from_end()
+{
+    cout << "Done\n";
+    if (this->start == nullptr)
+    {
+        cerr << "Empty list code : 404";
+        return;
+    }
+    else
+    {
+        Node *ptr = this->end;
+        this->end = ptr->prev;
+        this->end->next = nullptr;
+        delete ptr;
+
+        this->len_dec();
+    }
+}
+void DoubleLinkedList::del_from_beg()
+{
+    if (this->start == nullptr)
+    {
+        cerr << "Empty list code : 404";
+        return;
+    }
+    else
+    {
+        Node *ptr = this->start;
+        this->start = ptr->next;
+        this->start->prev = nullptr;
+        delete ptr;
+
+        this->len_dec();
+    }
+}
+
+void DoubleLinkedList::del_from_pos(int position)
+{
+    if (this->start == nullptr)
+    {
+        cout << "List is empty 404 List not found!\n";
+        return;
+    }
+    else if (position == 1)
+    {
+        this->del_from_beg();
+        return;
+    }
+    else if (position == this->length)
+    {
+        this->del_from_end();
+        return;
+    }
+    else if (position > this->length)
+    {
+        cout << "Invalid position 404 index not found!\n";
+        return;
+    }
+    else
+    {
+        Node *ptr = this->start;
+        for (int i = 1; i < position - 1; i++)
+        {
+            ptr = ptr->next;
+        }
+        Node *temp = ptr->next;
+        ptr->next = temp->next;
+        temp->next->prev = ptr;
+        delete temp;
+        this->len_dec();
     }
 }
